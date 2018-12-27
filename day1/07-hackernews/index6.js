@@ -2,13 +2,16 @@
 // 将render放到res下
 // 实现get方式添加新闻
 // 实现在原来的基础上追加新闻而不是覆盖
+// 实现新闻显示
 // 1 加载http模块
+// 
 var http= require('http');
 var fs =require('fs');
 var path = require('path');
 var mime = require('mime');
 var url = require('url');
 var querystring = require('querystring');
+var _=require('underscore');
 // 2 创建服务
 http.createServer(function(req,res){
 	res.render = function(filename){// 为res对象添加一个render()函数，方便后续使用
@@ -37,6 +40,15 @@ http.createServer(function(req,res){
 	// urlObj.query.title;
 
 	if (req.url === '/' || req.url ==='/index.html' && req.method === 'get') {//index.html
+		// 1 读取 data.json 文件中的数据，并将读取到的始祖转换成 list 数组
+		fs.readFile(path.join(__dirname,'data','data.json'),'utf8',function(err,data){// 'utf8'设置了，回调函数函数中的data就是一个字符串
+			if (err && ere.code != 'ENOENT') {// 第一次访问网站，data.json文件本身不存在，所以肯定是有错误的，但是这种错误并不是网站出错，所以不需要抛出错误
+				throw err;
+			}
+		var list = JSON.parse(data || '[]');
+		// 2 在服务器端使用模版引擎，将list中的数据和index.html 文件中的内通结合渲染给客户端
+		
+		// 读取index.html
 		res.render(path.join(__dirname,'views','index.html'));
 	} else if(req.url ==='/submit.html' && req.method === 'get'){//submit.html
 		res.render(path.join(__dirname,'views','submit.html'));
